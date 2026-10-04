@@ -57,7 +57,7 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/trueskills.git
+   git clone https://github.com/devrizu/trueskills.git
    cd trueskills
    ```
 

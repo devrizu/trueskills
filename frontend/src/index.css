@@ -71,8 +71,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Focus ring — signal-400 on every interactive element */
-*:focus-visible {
+/* Focus ring — signal-400 on every interactive element except inputs (handled by utility classes) */
+*:not(input):not(textarea):focus-visible {
   outline: 2px solid var(--color-signal-400);
   outline-offset: 2px;
 }

@@ -387,11 +387,11 @@ export function DashboardPage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="bg-graphite-50 p-3 rounded-button border border-graphite-200 mt-2">
-                      <div className="flex justify-between items-center mb-3">
-                        <label className="text-sm font-medium text-graphite-700 flex items-center gap-1.5">
-                          <ImageIcon size={14} className="text-graphite-500" />
-                          Photo or Video URLs
+                    <div className="mt-2 pt-3 border-t border-graphite-100">
+                      <div className="flex justify-between items-center mb-3 px-1">
+                        <label className="text-sm font-medium text-graphite-600 flex items-center gap-1.5">
+                          <ImageIcon size={14} />
+                          Add Media URL
                         </label>
                         <button 
                           type="button" 
@@ -418,7 +418,7 @@ export function DashboardPage() {
                                   setNewMediaUrls(updated)
                                 }}
                                 placeholder="https://example.com/image.jpg or .mp4" 
-                                className="flex-1 px-3 py-2 text-sm font-body text-graphite-950 bg-surface border border-graphite-200 rounded-button placeholder:text-graphite-400 transition-colors duration-150 hover:border-graphite-300 focus:border-graphite-400 focus:outline-none focus:ring-0"
+                                className="flex-1 px-3 py-2.5 text-sm font-body text-graphite-950 bg-graphite-50/50 border border-graphite-100 rounded-button placeholder:text-graphite-400 transition-colors duration-150 hover:border-graphite-200 focus:border-graphite-300 focus:bg-surface focus:outline-none focus:ring-0 shadow-sm"
                               />
                               {newMediaUrls.length > 1 && (
                                 <Button 
@@ -434,7 +434,7 @@ export function DashboardPage() {
                               )}
                             </div>
                             {url && (
-                              <div className="rounded-lg overflow-hidden border border-graphite-200 bg-graphite-950 flex items-center justify-center">
+                              <div className="rounded-card overflow-hidden border border-graphite-100 bg-graphite-50 flex items-center justify-center mt-1">
                                 {url.match(/\.(mp4|webm|ogg)$/i) ? (
                                   <video src={url} controls className="w-full max-h-48 object-contain" />
                                 ) : (

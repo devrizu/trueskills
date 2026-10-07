@@ -22,7 +22,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <textarea
           ref={ref}
           id={inputId}
-          className={`w-full px-3 py-2 text-sm font-body text-graphite-950 bg-surface border rounded-button placeholder:text-graphite-400 transition-colors duration-150 hover:border-graphite-400 focus:border-signal-600 focus:outline-none focus:ring-2 focus:ring-signal-400/30 min-h-20 resize-y ${
+          className={`w-full px-3 py-2 text-sm font-body text-graphite-950 bg-surface border rounded-button placeholder:text-graphite-400 transition-colors duration-150 hover:border-graphite-300 focus:border-graphite-400 focus:outline-none focus:ring-0 min-h-20 resize-y ${
             error ? 'border-error' : 'border-graphite-200'
           } ${className}`}
           {...props}

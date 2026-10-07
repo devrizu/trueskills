@@ -46,6 +46,7 @@ venv/
 
 # Agent Rules
 .agents/
+graphify-out/
 env/
 
 # Editor

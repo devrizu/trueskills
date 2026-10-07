@@ -32,6 +32,7 @@ export function DashboardPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [newPost, setNewPost] = useState('')
   const [newMediaUrls, setNewMediaUrls] = useState<string[]>([''])
+  const [showMediaInput, setShowMediaInput] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isFabMenuOpen, setIsFabMenuOpen] = useState(false)
@@ -373,59 +374,88 @@ export function DashboardPage() {
                     </div>
                   </div>
                   
-                  <div className="bg-graphite-50 p-3 rounded-button border border-graphite-200">
-                    <label className="text-sm font-medium text-graphite-700 mb-2 flex items-center gap-1.5">
-                      <ImageIcon size={14} className="text-graphite-500" />
-                      Add Photo or Video URLs
-                    </label>
-                    <div className="flex flex-col gap-2">
-                      {newMediaUrls.map((url, idx) => (
-                        <div key={idx} className="flex flex-col gap-2">
-                          <div className="flex gap-2">
-                            <Input 
-                              value={url}
-                              onChange={e => {
-                                const updated = [...newMediaUrls]
-                                updated[idx] = e.target.value
-                                setNewMediaUrls(updated)
-                              }}
-                              placeholder="https://example.com/image.jpg or .mp4" 
-                            />
-                            {newMediaUrls.length > 1 && (
-                              <Button 
-                                type="button" 
-                                variant="secondary" 
-                                className="px-3"
-                                onClick={() => {
-                                  setNewMediaUrls(newMediaUrls.filter((_, i) => i !== idx))
+                  {!showMediaInput ? (
+                    <div className="flex items-center px-1 border-t border-graphite-200 pt-3">
+                      <button 
+                        type="button"
+                        onClick={() => setShowMediaInput(true)}
+                        className="flex items-center gap-2 text-graphite-500 hover:text-signal-600 hover:bg-signal-50 px-3 py-2 rounded-button transition-colors cursor-pointer border-none bg-transparent font-medium text-sm"
+                        title="Add Media"
+                      >
+                        <ImageIcon size={18} />
+                        Add Media
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="bg-graphite-50 p-3 rounded-button border border-graphite-200 mt-2">
+                      <div className="flex justify-between items-center mb-3">
+                        <label className="text-sm font-medium text-graphite-700 flex items-center gap-1.5">
+                          <ImageIcon size={14} className="text-graphite-500" />
+                          Photo or Video URLs
+                        </label>
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            setShowMediaInput(false)
+                            setNewMediaUrls([''])
+                          }}
+                          className="text-graphite-400 hover:text-graphite-600 bg-transparent border-none cursor-pointer p-1"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                      
+                      <div className="flex flex-col gap-3">
+                        {newMediaUrls.map((url, idx) => (
+                          <div key={idx} className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                              <input 
+                                type="url"
+                                value={url}
+                                onChange={e => {
+                                  const updated = [...newMediaUrls]
+                                  updated[idx] = e.target.value
+                                  setNewMediaUrls(updated)
                                 }}
-                              >
-                                <X size={16} />
-                              </Button>
-                            )}
-                          </div>
-                          {url && (
-                            <div className="rounded-lg overflow-hidden border border-graphite-200 bg-graphite-950 flex items-center justify-center">
-                              {url.match(/\.(mp4|webm|ogg)$/i) ? (
-                                <video src={url} controls className="w-full max-h-48 object-contain" />
-                              ) : (
-                                <img src={url} alt="Preview" className="w-full max-h-48 object-contain" />
+                                placeholder="https://example.com/image.jpg or .mp4" 
+                                className="flex-1 px-3 py-2 text-sm font-body text-graphite-950 bg-surface border border-graphite-200 rounded-button placeholder:text-graphite-400 transition-colors duration-150 hover:border-graphite-300 focus:border-graphite-400 focus:outline-none focus:ring-0"
+                              />
+                              {newMediaUrls.length > 1 && (
+                                <Button 
+                                  type="button" 
+                                  variant="secondary" 
+                                  className="px-3"
+                                  onClick={() => {
+                                    setNewMediaUrls(newMediaUrls.filter((_, i) => i !== idx))
+                                  }}
+                                >
+                                  <X size={16} />
+                                </Button>
                               )}
                             </div>
-                          )}
-                        </div>
-                      ))}
+                            {url && (
+                              <div className="rounded-lg overflow-hidden border border-graphite-200 bg-graphite-950 flex items-center justify-center">
+                                {url.match(/\.(mp4|webm|ogg)$/i) ? (
+                                  <video src={url} controls className="w-full max-h-48 object-contain" />
+                                ) : (
+                                  <img src={url} alt="Preview" className="w-full max-h-48 object-contain" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <Button 
+                        type="button" 
+                        variant="secondary" 
+                        size="sm" 
+                        className="mt-3 w-full"
+                        onClick={() => setNewMediaUrls([...newMediaUrls, ''])}
+                      >
+                        <Plus size={14} className="mr-1" /> Add Another URL
+                      </Button>
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="secondary" 
-                      size="sm" 
-                      className="mt-3 w-full"
-                      onClick={() => setNewMediaUrls([...newMediaUrls, ''])}
-                    >
-                      <Plus size={14} className="mr-1" /> Add Another Media
-                    </Button>
-                  </div>
+                  )}
                 </form>
               </div>
               

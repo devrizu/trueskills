@@ -10,9 +10,9 @@ export function LandingPage() {
   return (
     <PageTransition className="min-h-screen bg-canvas overflow-hidden font-body text-graphite-600">
       {/* Navigation */}
-      <header className="absolute top-0 w-full z-30">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-canvas/80 backdrop-blur-md border-b border-graphite-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16">
             {/* Site branding */}
             <div className="shrink-0 mr-4">
               <Link to="/" className="flex items-center gap-2">

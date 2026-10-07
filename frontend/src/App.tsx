@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { AppShell } from './components/layout/AppShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import { PublicRoute } from './components/layout/PublicRoute'
+import { ScrollToTop } from './components/layout/ScrollToTop'
 
 import { NotFoundPage } from './pages/NotFoundPage'
 import { LandingPage } from './pages/LandingPage'
@@ -29,6 +30,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Public Routes */}
           <Route element={<PublicRoute />}>

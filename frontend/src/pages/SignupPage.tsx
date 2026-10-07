@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
@@ -7,7 +7,9 @@ import { GraduationCap, Building2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export function SignupPage() {
-  const [role, setRole] = useState<'student' | 'recruiter'>('student')
+  const [searchParams] = useSearchParams()
+  const initialRole = searchParams.get('role') === 'recruiter' ? 'recruiter' : 'student'
+  const [role, setRole] = useState<'student' | 'recruiter'>(initialRole)
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

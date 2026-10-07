@@ -123,14 +123,12 @@ export function Sidebar({ isPinned, onTogglePin }: SidebarProps) {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <motion.aside
-        layout
+      <aside
         onMouseEnter={() => !isPinned && setIsHovered(true)}
         onMouseLeave={() => !isPinned && setIsHovered(false)}
-        className={`h-screen bg-graphite-950 flex flex-col fixed left-0 top-0 z-40 ${
+        className={`h-screen bg-graphite-950 flex flex-col fixed left-0 top-0 z-40 transition-all duration-300 ease-in-out ${
           mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
         } ${isExpanded ? 'w-64' : 'w-20'}`}
-        transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
       >
         {/* Logo */}
         <div className="px-6 py-5 border-b border-graphite-800 flex items-center justify-between">
@@ -140,7 +138,7 @@ export function Sidebar({ isPinned, onTogglePin }: SidebarProps) {
             onClick={() => setMobileOpen(false)}
           >
             <img src="/logo.png" alt="TrueSkills Logo" className="h-8 shrink-0" />
-            <span className={`text-lg font-logo font-bold text-white transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 hidden'}`}>TrueSkills</span>
+            <span className={`text-lg font-logo font-bold text-white transition-opacity duration-300 whitespace-nowrap ${isExpanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>TrueSkills</span>
           </Link>
           {isExpanded && (
             <>
@@ -258,7 +256,7 @@ export function Sidebar({ isPinned, onTogglePin }: SidebarProps) {
             )}
           </div>
         </div>
-      </motion.aside>
+      </aside>
     </>
   )
 }

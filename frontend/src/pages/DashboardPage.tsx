@@ -11,6 +11,7 @@ import { TextArea } from '../components/ui/TextArea'
 import { Sparkles, Briefcase, Search, Plus, X, Image as ImageIcon, MessageSquare, ShieldCheck, Users } from 'lucide-react'
 import { PostItem } from '../components/ui/PostItem'
 import { Input } from '../components/ui/Input'
+import { Avatar } from '../components/ui/Avatar'
 
 interface Post {
   id: string
@@ -351,14 +352,26 @@ export function DashboardPage() {
               
               <div className="p-4 flex-1 overflow-y-auto">
                 <form id="create-post-form" onSubmit={handlePost} className="flex flex-col gap-4">
-                  <TextArea 
-                    value={newPost}
-                    onChange={e => setNewPost(e.target.value)}
-                    placeholder="What do you want to share with your network?" 
-                    rows={4}
-                    className="text-base"
-                    autoFocus
-                  />
+                  <div className="flex gap-4">
+                    <div className="shrink-0 pt-1">
+                      <Avatar 
+                        name={displayName} 
+                        src={profile && 'avatar_url' in profile ? (profile.avatar_url as string) : undefined} 
+                        size="md" 
+                      />
+                    </div>
+                    <div className="flex-1 flex flex-col min-w-0">
+                      <h4 className="font-semibold font-display text-graphite-950 mb-1">{displayName || 'User'}</h4>
+                      <textarea 
+                        value={newPost}
+                        onChange={e => setNewPost(e.target.value)}
+                        placeholder="What do you want to share with your network?" 
+                        rows={4}
+                        className="w-full text-lg font-body text-graphite-950 bg-transparent border-none placeholder:text-graphite-400 focus:outline-none focus:ring-0 resize-none px-0 py-1"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
                   
                   <div className="bg-graphite-50 p-3 rounded-button border border-graphite-200">
                     <label className="text-sm font-medium text-graphite-700 mb-2 flex items-center gap-1.5">

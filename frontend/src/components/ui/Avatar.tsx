@@ -1,7 +1,7 @@
 interface AvatarProps {
   src?: string
   name?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
   className?: string
 }
 
@@ -10,6 +10,8 @@ const sizeMap: Record<string, string> = {
   md: 'w-10 h-10 text-sm',
   lg: 'w-14 h-14 text-lg',
   xl: 'w-20 h-20 text-2xl',
+  '2xl': 'w-32 h-32 text-4xl',
+  '3xl': 'w-40 h-40 text-5xl',
 }
 
 const colorPairs = [

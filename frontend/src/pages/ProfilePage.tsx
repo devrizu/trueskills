@@ -328,7 +328,7 @@ export function ProfilePage() {
   return (
     <PageTransition className="max-w-4xl mx-auto flex flex-col gap-8 pb-12">
       
-      <Card className="overflow-hidden p-0 border-none bg-canvas shadow-sm">
+      <Card className="overflow-hidden !p-0 border-none bg-canvas shadow-sm">
         <div 
           className="h-48 bg-graphite-950 w-full relative" 
           style={profile?.bg_image_url ? { backgroundImage: `url(${profile.bg_image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
@@ -341,7 +341,7 @@ export function ProfilePage() {
             <Avatar 
               name={profile.full_name as string} 
               src={profile.avatar_url as string} 
-              size="xl" 
+              size="2xl" 
               className="border-4 border-surface shadow-sm"
             />
           </div>

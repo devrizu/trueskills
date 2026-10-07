@@ -9,7 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4)
   const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
+    .replace(/-/g, '+')
     .replace(/_/g, '/')
 
   const rawData = window.atob(base64)
@@ -39,6 +39,7 @@ export function usePushNotifications() {
         subscribeToPush()
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appUser])
 
   const requestPermissionAndSubscribe = async () => {

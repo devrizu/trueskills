@@ -17,8 +17,10 @@ export interface JobPosting {
   status: string
   created_at: string
   recruiter_id: string
-  recruiter_profiles: {
-    company_name: string
+  recruiter?: {
+    recruiter_profiles?: {
+      company_name: string
+    }
   }
 }
 
@@ -36,7 +38,7 @@ export function JobsPage() {
           .from('job_postings')
           .select(`
             *,
-            recruiter_profiles ( company_name )
+            recruiter:users ( recruiter_profiles ( company_name ) )
           `)
           .order('created_at', { ascending: false })
 
@@ -103,7 +105,7 @@ export function JobsPage() {
                 </div>
                 
                 <div className="text-sm font-semibold text-signal-600">
-                  {job.recruiter_profiles?.company_name || 'Company Name'}
+                  {job.recruiter?.recruiter_profiles?.company_name || 'Company Name'}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4 text-xs text-graphite-600 mt-1">

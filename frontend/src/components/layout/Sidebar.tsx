@@ -51,7 +51,7 @@ export function Sidebar({ isPinned, onTogglePin }: SidebarProps) {
   const { appUser, profile, signOut } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const navItems = appUser?.role === 'recruiter' ? recruiterNav : studentNav
+  const navItems = (appUser?.role === 'recruiter' || appUser?.role === 'admin') ? recruiterNav : studentNav
   const displayName =
     profile && 'full_name' in profile ? (profile.full_name as string) : ''
 
@@ -67,7 +67,7 @@ export function Sidebar({ isPinned, onTogglePin }: SidebarProps) {
         .from('messages')
         .select('*', { count: 'exact', head: true })
         .eq('receiver_id', appUser.id)
-        .eq('is_read', false)
+        .is('read_at', null)
       
       setUnreadCount(count || 0)
     }
@@ -91,19 +91,21 @@ export function Sidebar({ isPinned, onTogglePin }: SidebarProps) {
     <>
       {/* Mobile hamburger to cross animation */}
       <AnimatePresence mode="wait">
-        <motion.button
-          key={mobileOpen ? 'close' : 'menu'}
-          initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
-          animate={{ opacity: 1, rotate: 0, scale: 1 }}
-          exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
-          transition={{ duration: 0.2 }}
-          type="button"
-          className="fixed top-4 left-4 z-50 lg:hidden bg-graphite-950 text-white p-2 rounded-button cursor-pointer border-none shadow-md"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-        </motion.button>
+        {!mobileOpen && (
+          <motion.button
+            key="menu"
+            initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            type="button"
+            className="fixed top-4 left-4 z-50 lg:hidden bg-graphite-950 text-white p-2 rounded-button cursor-pointer border-none shadow-md"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu size={20} />
+          </motion.button>
+        )}
       </AnimatePresence>
 
       {/* Overlay */}
@@ -170,7 +172,7 @@ export function Sidebar({ isPinned, onTogglePin }: SidebarProps) {
         <nav className="flex-1 px-3 py-4 overflow-y-auto">
           <ul className="flex flex-col gap-1 list-none p-0 m-0">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.path
+              const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path + '/'))
               const Icon = item.icon
               return (
                 <li key={item.path}>

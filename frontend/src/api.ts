@@ -1,5 +1,29 @@
 // Frontend API wrapper for our Python FastAPI backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/ai'
+// VITE_API_URL may be given either as the server origin ("https://api.example.com")
+// or with the AI prefix ("https://api.example.com/api/ai"); normalise to the origin.
+export const API_ORIGIN = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000')
+  .replace(/\/+$/, '')
+  .replace(/\/api\/ai$/, '')
+const API_BASE_URL = `${API_ORIGIN}/api/ai`
+
+export async function notifyUser(receiverId: string, title: string, body: string) {
+  // Fire-and-forget push notification; never block the UI on this.
+  return fetch(`${API_ORIGIN}/api/notifications/notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ receiver_id: receiverId, title, body }),
+  }).catch(err => console.error('Error triggering push:', err))
+}
+
+export async function savePushSubscription(userId: string, endpoint: string, p256dh?: string, auth?: string) {
+  const res = await fetch(`${API_ORIGIN}/api/notifications/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, endpoint, p256dh, auth }),
+  })
+  if (!res.ok) throw new Error('Failed to subscribe on server')
+  return res.json()
+}
 
 export async function parseResume(userId: string, file: File) {
   const formData = new FormData()

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { searchCandidates, getCandidateSummary, draftOutreach } from '../api'
 import { useAuth } from '../contexts/AuthContext'
 import type { RecruiterProfile } from '../types'
-import { supabase } from '../lib/supabase'
+
 
 export function CandidateSearchPage() {
   const { profile, appUser } = useAuth()
@@ -17,7 +17,7 @@ export function CandidateSearchPage() {
   const [outreachDrafts, setOutreachDrafts] = useState<Record<string, string>>({})
   const [loadingSummary, setLoadingSummary] = useState<Record<string, boolean>>({})
   const [loadingOutreach, setLoadingOutreach] = useState<Record<string, boolean>>({})
-  const [sendingOutreach, setSendingOutreach] = useState<Record<string, boolean>>({})
+
   const [jobDescription, setJobDescription] = useState('')
 
   async function handleSearch(e: React.FormEvent) {

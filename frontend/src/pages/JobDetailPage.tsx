@@ -14,10 +14,12 @@ interface Application {
   student_id: string
   status: string
   applied_at: string
-  student_profiles: {
-    full_name: string
-    bio?: string
-    location?: string
+  student?: {
+    student_profiles?: {
+      full_name: string
+      bio?: string
+      location?: string
+    }
   }
   user_skills?: {
     self_rated_level: string
@@ -55,7 +57,7 @@ export function JobDetailPage() {
           .from('job_postings')
           .select(`
             *,
-            recruiter_profiles ( company_name )
+            recruiter:users ( recruiter_profiles ( company_name ) )
           `)
           .eq('id', id)
           .single()
@@ -84,7 +86,7 @@ export function JobDetailPage() {
             .from('applications')
             .select(`
               id, status, applied_at, student_id,
-              student_profiles ( full_name, bio, location )
+              student:users ( student_profiles ( full_name, bio, location ) )
             `)
             .eq('job_posting_id', id)
             .order('applied_at', { ascending: false })
@@ -148,8 +150,8 @@ export function JobDetailPage() {
     try {
       const applicantsPayload = applications.map(app => ({
         user_id: app.student_id,
-        bio: app.student_profiles?.bio,
-        location: app.student_profiles?.location,
+        bio: app.student?.student_profiles?.bio,
+        location: app.student?.student_profiles?.location,
         skills: app.user_skills?.map(s => `${s.skills.name} (${s.self_rated_level})`)
       }))
       
@@ -208,7 +210,7 @@ export function JobDetailPage() {
               <h1 className="text-3xl font-display font-bold text-graphite-950 mb-1">{job.title}</h1>
               <div className="text-lg font-semibold text-signal-600 flex items-center gap-2">
                 <Building2 size={18} />
-                {job.recruiter_profiles?.company_name || 'Company'}
+                {job.recruiter?.recruiter_profiles?.company_name || 'Company'}
               </div>
             </div>
 
@@ -278,7 +280,7 @@ export function JobDetailPage() {
                       <div className="flex justify-between items-start">
                         <div className="text-sm font-medium text-graphite-950">
                           <Link to={`/profile/${app.student_id}`} className="hover:underline text-graphite-950">
-                            {app.student_profiles?.full_name || 'Candidate'}
+                            {app.student?.student_profiles?.full_name || 'Candidate'}
                           </Link>
                         </div>
                         {app.aiScore !== undefined && (

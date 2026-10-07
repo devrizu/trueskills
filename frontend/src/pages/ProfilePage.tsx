@@ -279,7 +279,8 @@ export function ProfilePage() {
   const handleVerifySkill = async (userSkill: UserSkillWithSkill) => {
     setLoadingSkills(prev => ({...prev, [userSkill.id]: true}))
     try {
-      const { data: competitions } = await supabase.from('competitions').select('*').eq('user_id', targetUserId)
+      const { data: submissions } = await supabase.from('submissions').select('competitions(*)').eq('user_id', targetUserId)
+      const competitions = submissions?.map((s: any) => s.competitions) || []
       const res = await getSkillConfidence(
         userSkill.skill.name,
         userSkill.self_rated_level,
@@ -301,7 +302,8 @@ export function ProfilePage() {
   const handleAnalyzeCollab = async () => {
     setLoadingCollab(true)
     try {
-      const { data: competitions } = await supabase.from('competitions').select('*').eq('user_id', targetUserId)
+      const { data: submissions } = await supabase.from('submissions').select('competitions(*)').eq('user_id', targetUserId)
+      const competitions = submissions?.map((s: any) => s.competitions) || []
       const res = await getCollaborationSignals(profile, competitions || [])
       setCollabSignals({ signals: res.signals, rationale: res.rationale })
     } catch (error) {

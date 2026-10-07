@@ -16,7 +16,7 @@ interface Message {
   content: string
   ai_drafted: boolean
   sent_at: string
-  is_read?: boolean
+  read_at?: string | null
 }
 
 interface Conversation {
@@ -91,7 +91,7 @@ export function MessagesPage() {
               })
             }
 
-            if (msg.receiver_id === appUser?.id && msg.is_read === false) {
+            if (msg.receiver_id === appUser?.id && msg.read_at === null) {
               convosMap.get(otherUserId)!.unread_count += 1
             }
           }
@@ -141,6 +141,7 @@ export function MessagesPage() {
     }
 
     fetchConversations()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appUser])
 
   useEffect(() => {
@@ -158,9 +159,9 @@ export function MessagesPage() {
           setMessages(data as Message[])
 
           // Mark unread messages as read
-          const unreadIds = data.filter(m => m.receiver_id === appUser?.id && m.is_read === false).map(m => m.id)
+          const unreadIds = data.filter(m => m.receiver_id === appUser?.id && m.read_at === null).map(m => m.id)
           if (unreadIds.length > 0) {
-            await supabase.from('messages').update({ is_read: true }).in('id', unreadIds)
+            await supabase.from('messages').update({ read_at: new Date().toISOString() }).in('id', unreadIds)
             setConversations(prev => {
               const next = [...prev]
               const idx = next.findIndex(c => c.other_user_id === activeUserId)
@@ -229,7 +230,7 @@ export function MessagesPage() {
               body: data.content
             })
           }).catch(err => console.error('Error triggering push:', err))
-        } catch (e) {
+        } catch {
           // Ignore
         }
       }

@@ -8,17 +8,25 @@
 @theme {
   /* ---------- Neutrals — Graphite ---------- */
   --color-graphite-950: #15171A;
+  --color-graphite-900: #1E2226;
   --color-graphite-800: #262B30;
+  --color-graphite-700: #383F46;
   --color-graphite-600: #4B525A;
+  --color-graphite-500: #6B727A;
   --color-graphite-400: #8B929A;
+  --color-graphite-300: #B4BAC0;
   --color-graphite-200: #DDE1E5;
+  --color-graphite-100: #EBEEF0;
+  --color-graphite-50: #F7F8F9;
   --color-surface: #FFFFFF;
   --color-canvas: #F4F5F7;
 
   /* ---------- Signal — Primary Accent (teal) ---------- */
   --color-signal-600: #0F8B8D;
+  --color-signal-500: #21A6A8;
   --color-signal-400: #3DBFC0;
   --color-signal-100: #DFF3F3;
+  --color-signal-50: #EEFAFA;
 
   /* ---------- AI Layer — only for AI-generated output ---------- */
   --color-ai-600: #7458E0;

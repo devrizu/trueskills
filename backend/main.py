@@ -62,8 +62,12 @@ class NotificationPayload(BaseModel):
     title: str
     body: str
 
+# NOTE: Endpoints that call the (synchronous) Supabase / Gemini / urllib / webpush
+# clients are declared with plain `def` so FastAPI runs them in its threadpool.
+# Declaring them `async def` would block the event loop and serialize every request.
+
 @app.post("/api/notifications/subscribe")
-async def subscribe_notification(sub: PushSubscriptionModel):
+def subscribe_notification(sub: PushSubscriptionModel):
     if not supabase:
         raise HTTPException(status_code=500, detail="Supabase not configured")
     
@@ -82,9 +86,11 @@ async def subscribe_notification(sub: PushSubscriptionModel):
     return {"status": "success"}
 
 @app.post("/api/notifications/notify")
-async def send_notification(payload: NotificationPayload):
+def send_notification(payload: NotificationPayload):
     if not supabase:
         raise HTTPException(status_code=500, detail="Supabase not configured")
+    if not VAPID_PRIVATE_KEY or not VAPID_SUBJECT:
+        return {"status": "push not configured"}
         
     res = supabase.table("push_subscriptions").select("*").eq("user_id", payload.receiver_id).execute()
     subs = res.data
@@ -109,7 +115,8 @@ async def send_notification(payload: NotificationPayload):
             )
         except WebPushException as ex:
             print("Web push failed:", ex)
-            if ex.response and ex.response.status_code in [404, 410]:
+            # requests.Response is falsy for 4xx/5xx, so compare against None explicitly
+            if ex.response is not None and ex.response.status_code in [404, 410]:
                 supabase.table("push_subscriptions").delete().eq("id", sub["id"]).execute()
                 
     return {"status": "success", "notified": len(subs)}
@@ -123,7 +130,7 @@ def health_check():
     return {"status": "ok", "supabase": supabase is not None, "gemini": client is not None}
 
 @app.post("/api/ai/parse-resume")
-async def parse_resume(
+def parse_resume(
     user_id: str = Form(...),
     file: UploadFile = File(...)
 ):
@@ -135,7 +142,7 @@ async def parse_resume(
 
     try:
         # 1. Read PDF bytes
-        content = await file.read()
+        content = file.file.read()
         
         # 2. Use Gemini 2.5 Flash to extract skills
         # We specify response_mime_type="application/json" and give a strict schema
@@ -165,40 +172,51 @@ async def parse_resume(
             print("Failed to parse Gemini response as JSON:", response.text)
             raise HTTPException(status_code=500, detail="Failed to parse resume.")
             
-        print(f"Extracted {len(skills_data)} skills for user {user_id}")
-        
-        # 3. Store in Supabase
+        # Gemini sometimes wraps the array in an object, e.g. {"skills": [...]}
+        if isinstance(skills_data, dict):
+            skills_data = next((v for v in skills_data.values() if isinstance(v, list)), [])
+        if not isinstance(skills_data, list):
+            skills_data = []
+
+        # Normalise + de-duplicate (keep first level seen per skill)
+        levels_by_name: Dict[str, str] = {}
         for item in skills_data:
-            skill_name = str(item.get('name')).strip().lower()
-            level = str(item.get('level')).strip().lower()
-            if level not in ['beginner', 'intermediate', 'advanced']:
-                level = 'intermediate'
-                
+            if not isinstance(item, dict):
+                continue
+            skill_name = str(item.get('name') or '').strip().lower()
+            level = str(item.get('level') or '').strip().lower()
             if not skill_name:
                 continue
-                
-            # Upsert into skills table
-            skill_res = supabase.table('skills').select('id').eq('name', skill_name).execute()
-            
-            if not skill_res.data:
-                # Create skill
-                new_skill = supabase.table('skills').insert({'name': skill_name}).execute()
-                skill_id = new_skill.data[0]['id']
-            else:
-                skill_id = skill_res.data[0]['id']
-                
-            # Upsert into user_skills table
-            # Since we have a unique constraint on (user_id, skill_id), we can check first
-            existing = supabase.table('user_skills').select('id').eq('user_id', user_id).eq('skill_id', skill_id).execute()
-            if not existing.data:
-                supabase.table('user_skills').insert({
-                    'user_id': user_id,
-                    'skill_id': skill_id,
-                    'self_rated_level': level
-                }).execute()
-                
-        return {"status": "success", "extracted_skills": len(skills_data)}
+            if level not in ['beginner', 'intermediate', 'advanced']:
+                level = 'intermediate'
+            levels_by_name.setdefault(skill_name, level)
+
+        print(f"Extracted {len(levels_by_name)} skills for user {user_id}")
+
+        if levels_by_name:
+            # 3. Store in Supabase using batched queries (previously 2-4 round trips per skill)
+            names = list(levels_by_name.keys())
+            existing = supabase.table('skills').select('id, name').in_('name', names).execute()
+            id_by_name = {s['name']: s['id'] for s in existing.data}
+
+            missing = [{'name': n} for n in names if n not in id_by_name]
+            if missing:
+                created = supabase.table('skills').insert(missing).execute()
+                id_by_name.update({s['name']: s['id'] for s in created.data})
+
+            rows = [
+                {'user_id': user_id, 'skill_id': id_by_name[n], 'self_rated_level': lvl}
+                for n, lvl in levels_by_name.items() if n in id_by_name
+            ]
+            # unique(user_id, skill_id) -> skip skills the user already has
+            supabase.table('user_skills').upsert(
+                rows, on_conflict='user_id,skill_id', ignore_duplicates=True
+            ).execute()
+
+        return {"status": "success", "extracted_skills": len(levels_by_name)}
         
+    except HTTPException:
+        raise
     except Exception as e:
         print("Error in parse_resume:", e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -207,7 +225,7 @@ class EmbeddingRequest(BaseModel):
     user_id: str
 
 @app.post("/api/ai/generate-profile-embedding")
-async def generate_profile_embedding(req: EmbeddingRequest):
+def generate_profile_embedding(req: EmbeddingRequest):
     """
     Generates an embedding vector for a user's profile and skills, 
     and saves it to the embeddings table.
@@ -264,6 +282,8 @@ async def generate_profile_embedding(req: EmbeddingRequest):
             
         return {"status": "success", "message": "Embedding generated and stored."}
         
+    except HTTPException:
+        raise
     except Exception as e:
         print("Error in generate_profile_embedding:", e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -274,7 +294,7 @@ class SearchCandidatesRequest(BaseModel):
     match_count: int = 10
 
 @app.post("/api/ai/search-candidates")
-async def search_candidates(req: SearchCandidatesRequest):
+def search_candidates(req: SearchCandidatesRequest):
     """
     Performs semantic search across candidate profiles using pgvector.
     """
@@ -362,7 +382,7 @@ class CandidateSummaryRequest(BaseModel):
     candidate_data: dict
 
 @app.post("/api/ai/candidate-summary")
-async def candidate_summary(req: CandidateSummaryRequest):
+def candidate_summary(req: CandidateSummaryRequest):
     if not client:
         raise HTTPException(status_code=500, detail="AI not configured.")
         
@@ -390,7 +410,7 @@ class DraftOutreachRequest(BaseModel):
     company_name: str
 
 @app.post("/api/ai/draft-outreach")
-async def draft_outreach(req: DraftOutreachRequest):
+def draft_outreach(req: DraftOutreachRequest):
     if not client:
         raise HTTPException(status_code=500, detail="AI not configured.")
         
@@ -420,7 +440,7 @@ class ScreenBiasRequest(BaseModel):
     job_description: str
 
 @app.post("/api/ai/screen-bias")
-async def screen_bias(req: ScreenBiasRequest):
+def screen_bias(req: ScreenBiasRequest):
     if not client:
         raise HTTPException(status_code=500, detail="AI not configured.")
         
@@ -564,7 +584,7 @@ class VerifyProjectRequest(BaseModel):
     project_id: str
 
 @app.post("/api/ai/verify-project")
-async def verify_project(req: VerifyProjectRequest):
+def verify_project(req: VerifyProjectRequest):
     if not client or not supabase:
         raise HTTPException(status_code=500, detail="AI or Database not configured properly.")
         
@@ -590,7 +610,7 @@ async def verify_project(req: VerifyProjectRequest):
         api_url = f"https://api.github.com/repos/{owner}/{repo}"
         gh_req = urllib.request.Request(api_url, headers={'User-Agent': 'TrueSkills-AI'})
         try:
-            with urllib.request.urlopen(gh_req) as response:
+            with urllib.request.urlopen(gh_req, timeout=10) as response:
                 repo_data = json.loads(response.read().decode())
         except Exception as e:
             return {"status": "error", "message": f"Failed to fetch GitHub repo: {str(e)}"}
@@ -626,6 +646,8 @@ async def verify_project(req: VerifyProjectRequest):
             
         return {"status": "failed", "message": "AI could not verify the repository matches the project."}
         
+    except HTTPException:
+        raise
     except Exception as e:
         print("Error verifying project:", e)
         if "RESOURCE_EXHAUSTED" in str(e) or "429" in str(e):

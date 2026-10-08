@@ -50,7 +50,7 @@ export function LandingPage() {
             <div className="text-center max-w-4xl mx-auto mb-16">
               <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight text-graphite-950 mb-6 leading-[1.1]">
                 Hire the Top 1%, <br />
-                <span className="text-signal-600">Verified by Code.</span>
+                <span className="text-signal-600">Verified by AI.</span>
               </h1>
               <p className="text-xl md:text-2xl text-graphite-600 mb-10 leading-relaxed max-w-2xl mx-auto">
                 Stop guessing. We analyze actual GitHub activity, project commits, and competitive ranks to find the talent you actually need.
@@ -221,7 +221,7 @@ export function LandingPage() {
                     <p className="text-signal-100 text-xl md:text-2xl mb-0 font-body">Join thousands of candidates and companies already using TrueSkills to build better teams.</p>
                   </div>
                   <div className="shrink-0 w-full lg:w-auto">
-                    <Button size="lg" onClick={() => navigate('/signup?role=recruiter')} className="w-full bg-white text-signal-700 hover:bg-signal-50 hover:text-signal-800 border-none shadow-xl h-14 px-10 text-lg">
+                    <Button variant="secondary" size="lg" onClick={() => navigate('/signup?role=recruiter')} className="w-full !bg-white !text-signal-700 hover:!bg-signal-50 hover:!text-signal-800 !border-transparent shadow-xl h-14 px-10 text-lg">
                       Create Free Account
                     </Button>
                   </div>

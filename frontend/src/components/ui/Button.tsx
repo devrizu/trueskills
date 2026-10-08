@@ -16,14 +16,14 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    'inline-flex items-center justify-center font-body font-semibold rounded-button transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+    'inline-flex items-center justify-center font-body font-semibold rounded-button transition-all duration-200 ease-out cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variants: Record<string, string> = {
-    primary: 'bg-signal-600 text-white hover:bg-signal-600/90 active:bg-signal-600/80',
+    primary: 'bg-signal-600 text-white shadow-sm hover:shadow-md hover:bg-signal-500 hover:-translate-y-0.5 active:bg-signal-700 active:translate-y-0',
     secondary:
-      'border border-graphite-200 text-graphite-950 bg-surface hover:bg-canvas active:bg-graphite-200/50',
-    ghost: 'text-graphite-600 hover:text-graphite-950 hover:bg-canvas active:bg-graphite-200/30',
-    danger: 'bg-error text-white hover:bg-error/90 active:bg-error/80',
+      'border border-graphite-200 text-graphite-950 bg-surface shadow-sm hover:bg-graphite-50 hover:border-graphite-300 active:bg-graphite-100',
+    ghost: 'text-graphite-600 hover:text-graphite-950 hover:bg-graphite-50 active:bg-graphite-100',
+    danger: 'bg-error text-white shadow-sm hover:shadow-md hover:bg-error/90 active:bg-error/80',
   }
 
   const sizes: Record<string, string> = {

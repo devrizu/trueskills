@@ -138,11 +138,13 @@ export function DashboardPage() {
 
   if (isStudent) {
     dashboardContent = (
-      <div className="max-w-4xl mx-auto flex flex-col gap-8">
+      <div className="max-w-5xl mx-auto flex flex-col gap-10 py-6 relative">
+        <div className="absolute top-0 -left-10 w-72 h-72 bg-signal-100 rounded-full mix-blend-multiply filter blur-3xl opacity-40 pointer-events-none"></div>
+        <div className="absolute top-10 right-20 w-72 h-72 bg-ai-50 rounded-full mix-blend-multiply filter blur-3xl opacity-40 pointer-events-none"></div>
         
-        <header className="flex justify-between items-end mb-2">
+        <header className="flex justify-between items-end mb-2 relative z-10">
           <div>
-            <h1 className="text-4xl font-display font-bold text-graphite-950 mb-2 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-graphite-950 mb-3 tracking-tight">
               Welcome back, {displayName}
             </h1>
             <p className="text-graphite-600 font-body text-lg">
@@ -156,13 +158,13 @@ export function DashboardPage() {
           </Link>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="md:col-span-1 flex flex-col items-center justify-center text-center py-8">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-graphite-600 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+          <Card className="md:col-span-1 flex flex-col items-center justify-center text-center py-10 bg-gradient-to-b from-surface to-graphite-50/50">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-graphite-500 mb-6">
               Profile Strength
             </h3>
             <ReadingMark value={profileStrength} max={100} size="md" variant="signal" />
-            <p className="text-xs text-graphite-500 mt-4">
+            <p className="text-sm text-graphite-500 mt-6 leading-relaxed">
               Add more projects and skills to boost your score.
             </p>
           </Card>
@@ -203,10 +205,13 @@ export function DashboardPage() {
     )
   } else if (isRecruiter) {
     dashboardContent = (
-      <div className="max-w-4xl mx-auto flex flex-col gap-8">
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="max-w-5xl mx-auto flex flex-col gap-10 py-6 relative">
+        <div className="absolute top-0 -left-10 w-72 h-72 bg-signal-100 rounded-full mix-blend-multiply filter blur-3xl opacity-40 pointer-events-none"></div>
+        <div className="absolute top-10 right-20 w-72 h-72 bg-indigo-50 rounded-full mix-blend-multiply filter blur-3xl opacity-40 pointer-events-none"></div>
+
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div>
-            <h1 className="text-4xl font-display font-bold text-graphite-950 mb-2 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-graphite-950 mb-3 tracking-tight">
               Recruiter Dashboard
             </h1>
             <p className="text-graphite-600 font-body text-lg">
@@ -223,34 +228,45 @@ export function DashboardPage() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link to="/search" className="no-underline">
-            <Card hover={true} className="flex flex-col gap-3 hover:border-signal-400 transition-colors cursor-pointer group h-full">
-              <div className="w-10 h-10 rounded-full bg-signal-100 flex items-center justify-center text-signal-600 mb-2 group-hover:scale-110 transition-transform">
-                <Search size={20} />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+          <Link to="/search" className="no-underline md:col-span-2">
+            <Card hover={true} className="flex flex-col gap-4 group h-full p-8 bg-gradient-to-br from-signal-50/50 to-surface">
+              <div className="w-12 h-12 rounded-2xl bg-signal-100 flex items-center justify-center text-signal-600 mb-2 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
+                <Search size={22} />
               </div>
-              <h3 className="font-semibold text-graphite-950">Candidate Search</h3>
-              <p className="text-sm text-graphite-600">Find talent by verified skills and competition ranks.</p>
+              <h3 className="text-xl font-display font-bold text-graphite-950">Candidate Search</h3>
+              <p className="text-base text-graphite-600 leading-relaxed">Find talent by verified skills, Github contributions, and competition ranks.</p>
             </Card>
           </Link>
 
-          <Link to="/jobs" className="no-underline">
-            <Card hover={true} className="flex flex-col gap-3 hover:border-signal-400 transition-colors cursor-pointer group h-full">
-              <div className="w-10 h-10 rounded-full bg-signal-100 flex items-center justify-center text-signal-600 mb-2 group-hover:scale-110 transition-transform">
-                <Briefcase size={20} />
+          <Link to="/jobs" className="no-underline md:col-span-2">
+            <Card hover={true} className="flex flex-col gap-4 group h-full p-8 bg-gradient-to-br from-indigo-50/50 to-surface">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 mb-2 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <Briefcase size={22} />
               </div>
-              <h3 className="font-semibold text-graphite-950">Active Postings</h3>
-              <p className="text-sm text-graphite-600">Manage your job board listings.</p>
+              <h3 className="text-xl font-display font-bold text-graphite-950">Active Postings</h3>
+              <p className="text-base text-graphite-600 leading-relaxed">Manage your job board listings and applications.</p>
             </Card>
           </Link>
 
-          <Card hover={true} onClick={() => setIsAIToolsModalOpen(true)} className="flex flex-col gap-3 border-ai-200 hover:border-ai-400 transition-colors cursor-pointer group relative overflow-hidden h-full">
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-ai-50 rounded-full mix-blend-multiply opacity-50 transition-transform group-hover:scale-150"></div>
-            <div className="w-10 h-10 rounded-full bg-ai-100 flex items-center justify-center text-ai-600 mb-2 relative z-10 group-hover:scale-110 transition-transform">
-              <Sparkles size={20} />
+          <Card hover={true} onClick={() => setIsAIToolsModalOpen(true)} className="md:col-span-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-8 relative overflow-hidden group">
+            <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-ai-50/80 to-transparent pointer-events-none"></div>
+            <div className="absolute -right-10 -top-10 w-40 h-40 bg-ai-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50 transition-transform duration-700 group-hover:scale-150 pointer-events-none"></div>
+            
+            <div className="flex items-center gap-5 relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-ai-100 flex items-center justify-center text-ai-600 group-hover:scale-110 transition-all duration-300 shadow-sm">
+                <Sparkles size={22} />
+              </div>
+              <div>
+                <h3 className="text-xl font-display font-bold text-graphite-950 mb-1">AI Tools</h3>
+                <p className="text-base text-graphite-600">Draft outreach, screen for bias, and summarize profiles instantly.</p>
+              </div>
             </div>
-            <h3 className="font-semibold text-graphite-950 relative z-10">AI Tools</h3>
-            <p className="text-sm text-graphite-600 relative z-10">Draft outreach, screen for bias, and summarize profiles.</p>
+            <div className="relative z-10 sm:self-center">
+              <Button variant="secondary" className="group-hover:bg-graphite-950 group-hover:text-white transition-colors">
+                Explore Tools
+              </Button>
+            </div>
           </Card>
         </div>
 

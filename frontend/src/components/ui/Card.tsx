@@ -11,8 +11,8 @@ export function Card({ children, hover = false, className = '', onClick }: CardP
   return (
     <motion.div
       whileHover={hover ? { y: -4, scale: 1.01 } : undefined}
-      className={`bg-surface border border-graphite-200 rounded-card p-6 ${
-        hover ? 'transition-shadow duration-150 hover:shadow-card-hover cursor-pointer' : ''
+      className={`bg-surface rounded-card p-6 shadow-sm ${
+        hover ? 'transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 cursor-pointer' : ''
       } ${className}`}
       onClick={onClick}
       role={onClick ? 'button' : undefined}

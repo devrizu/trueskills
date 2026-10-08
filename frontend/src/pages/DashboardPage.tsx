@@ -142,10 +142,10 @@ export function DashboardPage() {
         
         <header className="flex justify-between items-end mb-2">
           <div>
-            <h1 className="text-3xl font-display font-bold text-graphite-950 mb-2">
+            <h1 className="text-4xl font-display font-bold text-graphite-950 mb-2 tracking-tight">
               Welcome back, {displayName}
             </h1>
-            <p className="text-graphite-600 font-body">
+            <p className="text-graphite-600 font-body text-lg">
               Here's what's happening with your portfolio today.
             </p>
           </div>
@@ -206,10 +206,10 @@ export function DashboardPage() {
       <div className="max-w-4xl mx-auto flex flex-col gap-8">
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold text-graphite-950 mb-2">
+            <h1 className="text-4xl font-display font-bold text-graphite-950 mb-2 tracking-tight">
               Recruiter Dashboard
             </h1>
-            <p className="text-graphite-600 font-body">
+            <p className="text-graphite-600 font-body text-lg">
               Manage your hiring pipeline and discover verified talent.
             </p>
           </div>

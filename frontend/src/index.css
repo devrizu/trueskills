@@ -44,8 +44,8 @@
 
   /* ---------- Typography ---------- */
   --font-logo: "Outfit", system-ui, sans-serif;
-  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Manrope", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
   /* ---------- Border Radius ---------- */
@@ -61,6 +61,10 @@
 /* ============================================================
    Base Styles
    ============================================================ */
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  letter-spacing: -0.025em;
+}
 
 body {
   font-family: var(--font-body);
